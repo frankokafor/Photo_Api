@@ -7,11 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.frankokafor.rest.model.request.UserDetailsRequestModel;
 import com.frankokafor.rest.model.response.UserDetailsResponseModel;
 import com.frankokafor.rest.service.implimentation.UserServiceImplimentation;
 import com.frankokafor.rest.shared.object.UserDataTransferObject;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("users")
@@ -20,6 +20,7 @@ public class UserController {
 	private UserServiceImplimentation userService;
 	
 	@PostMapping
+	@ApiOperation(value = "creates a new user...")
 	public ResponseEntity<UserDetailsResponseModel> createUser(UserDetailsRequestModel requestModel) {
 		UserDetailsResponseModel returnModel = new UserDetailsResponseModel();
 		UserDataTransferObject transferObject = new UserDataTransferObject();

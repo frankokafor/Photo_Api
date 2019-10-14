@@ -1,7 +1,12 @@
 package com.frankokafor.rest.service.implimentation;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +43,13 @@ public class UserServiceImplimentation implements UserService {
 		UserDataTransferObject returnValue = new UserDataTransferObject();
 		BeanUtils.copyProperties(storedUser, returnValue);
 		return returnValue;
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		UserEntity userEntity = userRepo.findByEmail(username);
+		if(userEntity==null) {throw new UsernameNotFoundException(username); }
+		return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
 	}
 
 }
