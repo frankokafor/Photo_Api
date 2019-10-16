@@ -46,10 +46,19 @@ public class UserServiceImplimentation implements UserService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) {
 		UserEntity userEntity = userRepo.findByEmail(username);
 		if(userEntity==null) {throw new UsernameNotFoundException(username); }
 		return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+	}
+
+	@Override
+	public UserDataTransferObject getUser(String email) {
+		UserEntity entity = userRepo.findByEmail(email);
+		if(entity==null) {throw new UsernameNotFoundException("user " +email + " does not exixts");}
+		UserDataTransferObject returnValue = new UserDataTransferObject();
+		BeanUtils.copyProperties(entity, returnValue);
+		return returnValue;
 	}
 
 }

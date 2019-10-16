@@ -1,14 +1,10 @@
 package com.frankokafor.rest.models;
 
 import java.io.Serializable;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity(name = "users")
 public class UserEntity implements Serializable{
@@ -39,8 +35,8 @@ public class UserEntity implements Serializable{
 	@Column(nullable = false)
 	private Boolean emailVerificationStatus = false;
 	
-	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL)
-	private List<AddressEntity> addresses;
+//	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL)
+//	private List<AddressEntity> addresses;
 
 	public long getId() {
 		return Id;

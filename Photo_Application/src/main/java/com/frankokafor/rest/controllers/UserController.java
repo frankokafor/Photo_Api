@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.frankokafor.rest.model.request.UserDetailsRequestModel;
@@ -14,14 +15,14 @@ import com.frankokafor.rest.shared.object.UserDataTransferObject;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("users")
+@RequestMapping("/users")
 public class UserController {
 	@Autowired
 	private UserServiceImplimentation userService;
 	
-	@PostMapping
 	@ApiOperation(value = "creates a new user...")
-	public ResponseEntity<UserDetailsResponseModel> createUser(UserDetailsRequestModel requestModel) {
+	@PostMapping
+	public ResponseEntity<UserDetailsResponseModel> createUser(@RequestBody UserDetailsRequestModel requestModel) {
 		UserDetailsResponseModel returnModel = new UserDetailsResponseModel();
 		UserDataTransferObject transferObject = new UserDataTransferObject();
 		BeanUtils.copyProperties(requestModel, transferObject);
