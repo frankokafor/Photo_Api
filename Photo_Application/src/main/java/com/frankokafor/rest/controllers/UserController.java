@@ -4,6 +4,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,15 @@ public class UserController {
 		
 		UserDataTransferObject newUser = userService.createUser(transferObject);
 		BeanUtils.copyProperties(newUser, returnModel);
-		return new ResponseEntity<UserDetailsResponseModel>(returnModel,HttpStatus.CREATED);
+		return new ResponseEntity<>(returnModel,HttpStatus.CREATED);
+	}
+	
+	@ApiOperation(value = "get a single user...")
+	@GetMapping("/{userId}")
+	public ResponseEntity<UserDetailsResponseModel> getUser(@PathVariable("userId") String userId){
+		UserDetailsResponseModel responseModel = new UserDetailsResponseModel();
+		UserDataTransferObject transferObject = userService.getUserByUserId(userId);
+		BeanUtils.copyProperties(transferObject, responseModel);
+		return new ResponseEntity<>(responseModel,HttpStatus.FOUND);
 	}
 }

@@ -61,4 +61,13 @@ public class UserServiceImplimentation implements UserService {
 		return returnValue;
 	}
 
+	@Override
+	public UserDataTransferObject getUserByUserId(String userId) {
+		UserEntity userEntity = userRepo.findByUserId(userId);
+		if(userEntity==null) {throw new UsernameNotFoundException("user with " +userId+ " does not exixts");}
+		UserDataTransferObject value = new UserDataTransferObject();
+		BeanUtils.copyProperties(userEntity, value);
+		return value;
+	}
+
 }

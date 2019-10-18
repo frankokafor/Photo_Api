@@ -7,4 +7,5 @@ import com.frankokafor.rest.shared.object.UserDataTransferObject;
 public interface UserService extends UserDetailsService {
 	UserDataTransferObject createUser(UserDataTransferObject transferObject);
 	UserDataTransferObject getUser(String email);
+	UserDataTransferObject getUserByUserId(String userId);
 }
