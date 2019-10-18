@@ -3,6 +3,7 @@ package com.frankokafor.rest.controllers;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,18 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.frankokafor.rest.model.request.UserDetailsRequestModel;
 import com.frankokafor.rest.model.response.UserDetailsResponseModel;
-import com.frankokafor.rest.service.implimentation.UserServiceImplimentation;
+import com.frankokafor.rest.services.UserService;
 import com.frankokafor.rest.shared.object.UserDataTransferObject;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping(path = "/users")
 public class UserController {
 	@Autowired
-	private UserServiceImplimentation userService;
+	private UserService userService;
 	
 	@ApiOperation(value = "creates a new user...")
-	@PostMapping
+	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},
+				 consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<UserDetailsResponseModel> createUser(@RequestBody UserDetailsRequestModel requestModel) {
 		UserDetailsResponseModel returnModel = new UserDetailsResponseModel();
 		UserDataTransferObject transferObject = new UserDataTransferObject();
@@ -35,7 +37,8 @@ public class UserController {
 	}
 	
 	@ApiOperation(value = "get a single user...")
-	@GetMapping("/{userId}")
+	@GetMapping(path = "/{userId}",
+			produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<UserDetailsResponseModel> getUser(@PathVariable("userId") String userId){
 		UserDetailsResponseModel responseModel = new UserDetailsResponseModel();
 		UserDataTransferObject transferObject = userService.getUserByUserId(userId);
