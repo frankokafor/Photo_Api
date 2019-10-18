@@ -35,7 +35,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 			.addFilter(new AuthorizationFilter(authenticationManager()))
 			.sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-	/*because most times 
+	/*because most times session can be used to cache our headers, we have to make our session stateless so spring knows that
+	 * sessions are not repeated or extended.
 	 * 		
 	 */
 	}
