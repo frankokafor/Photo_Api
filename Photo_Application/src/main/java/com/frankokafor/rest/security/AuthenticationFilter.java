@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frankokafor.rest.configuration.SpringApplicationContext;
 import com.frankokafor.rest.model.request.UserLoginRequestModel;
-import com.frankokafor.rest.services.UserService;
+import com.frankokafor.rest.service.UserService;
 import com.frankokafor.rest.shared.object.UserDataTransferObject;
 
 import io.jsonwebtoken.Jwts;
