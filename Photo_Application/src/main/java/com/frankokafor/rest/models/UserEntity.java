@@ -1,42 +1,46 @@
 package com.frankokafor.rest.models;
 
 import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity(name = "users")
-public class UserEntity implements Serializable{
+public class UserEntity implements Serializable {
 
 	private static final long serialVersionUID = 8523746730771191759L;
 
 	@Id
 	@GeneratedValue
 	private long Id;
-	
+
 	@Column(nullable = false, length = 50)
 	private String firstName;
-	
+
 	@Column(nullable = false, length = 50)
 	private String lastName;
-	
+
 	@Column(nullable = false, length = 120)
 	private String email;
-	
+
 	@Column(nullable = false)
 	private String userId;
-	
+
 	@Column(nullable = false)
 	private String encryptedPassword;
-	
+
 	private String emailVerificationToken;
-	
+
 	@Column(nullable = false)
 	private Boolean emailVerificationStatus = false;
-	
-//	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL)
-//	private List<AddressEntity> addresses;
+
+	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL)
+	private List<AddressEntity> addresses;
 
 	public long getId() {
 		return Id;
@@ -82,6 +86,14 @@ public class UserEntity implements Serializable{
 		return encryptedPassword;
 	}
 
+	public List<AddressEntity> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<AddressEntity> addresses) {
+		this.addresses = addresses;
+	}
+
 	public void setEncryptedPassword(String encryptedPassword) {
 		this.encryptedPassword = encryptedPassword;
 	}
@@ -101,7 +113,5 @@ public class UserEntity implements Serializable{
 	public void setEmailVerificationStatus(Boolean emailVerificationStatus) {
 		this.emailVerificationStatus = emailVerificationStatus;
 	}
-	
-	
-	
+
 }

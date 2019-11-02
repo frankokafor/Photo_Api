@@ -3,6 +3,8 @@ package com.frankokafor.rest.shared.object;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 public class UserDataTransferObject implements Serializable {
 
 //it is adviseable to always use transfer objects  
@@ -17,8 +19,8 @@ public class UserDataTransferObject implements Serializable {
 	private String encryptedPassword;
 	private String emailVerificationToken;
 	private Boolean emailVerificationStatus = false;
-	
 	private List<AddressTransferObject> addresses;
+	@XmlTransient
 	public List<AddressTransferObject> getAddresses() {
 		return addresses;
 	}

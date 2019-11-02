@@ -1,0 +1,3 @@
+1) checking for authenticity of the user email provided
+2) when the user provides an email, we will programatically send an email verifivation link to confirm the email is
+authentic before the user can sign in...
