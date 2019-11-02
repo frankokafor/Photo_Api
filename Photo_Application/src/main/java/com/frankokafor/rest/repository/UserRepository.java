@@ -13,10 +13,10 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, L
 	 * 
 	 */
 	
-	@Query(value = "SELECT * FROM users WHERE email=?",nativeQuery = true)
+//	@Query(value = "SELECT * FROM users WHERE email=?",nativeQuery = true)
 	UserEntity findByEmail(String email);
 	
-	@Query(value = "SELECT * FROM users WHERE user_id=?",nativeQuery = true)
+//	@Query(value = "SELECT * FROM users WHERE user_id=?",nativeQuery = true)
 	UserEntity findByUserId(String userId);
 
 }

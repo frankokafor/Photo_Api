@@ -1,10 +1,15 @@
 package com.frankokafor.rest.model.response;
 
-public class UserDetailsResponseModel {
+import java.util.List;
+
+import org.springframework.hateoas.ResourceSupport;
+
+public class UserDetailsResponseModel extends ResourceSupport{
 	private String firstName;
 	private String lastName;
 	private String email;
 	private String userId;
+	private List<AddressResponse> addresses;
 	public String getFirstName() {
 		return firstName;
 	}
@@ -28,6 +33,12 @@ public class UserDetailsResponseModel {
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	public List<AddressResponse> getAddresses() {
+		return addresses;
+	}
+	public void setAddresses(List<AddressResponse> addresses) {
+		this.addresses = addresses;
 	}
 	
 	

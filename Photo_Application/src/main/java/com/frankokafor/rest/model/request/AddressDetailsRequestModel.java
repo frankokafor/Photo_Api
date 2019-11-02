@@ -1,38 +1,17 @@
-package com.frankokafor.rest.shared.object;
+package com.frankokafor.rest.model.request;
 
-public class AddressTransferObject {
-	
-	private long id;
-	
-	private String addressId;
-	
+public class AddressDetailsRequestModel {
+
 	private String city;
-	
+
 	private String country;
-	
+
 	private String type;
-	
+
 	private String streetName;
-	
+
 	private String postalCode;
-	
-	private UserDataTransferObject userDetails;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getAddressId() {
-		return addressId;
-	}
-
-	public void setAddressId(String addressId) {
-		this.addressId = addressId;
-	}
 
 	public String getCity() {
 		return city;
@@ -74,13 +53,4 @@ public class AddressTransferObject {
 		this.postalCode = postalCode;
 	}
 
-	public UserDataTransferObject getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(UserDataTransferObject userDetails) {
-		this.userDetails = userDetails;
-	}
-	
-	
 }

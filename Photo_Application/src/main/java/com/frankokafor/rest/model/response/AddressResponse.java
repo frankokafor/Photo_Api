@@ -1,9 +1,9 @@
-package com.frankokafor.rest.shared.object;
+package com.frankokafor.rest.model.response;
 
-public class AddressTransferObject {
-	
-	private long id;
-	
+import org.springframework.hateoas.ResourceSupport;
+
+public class AddressResponse extends ResourceSupport{
+
 	private String addressId;
 	
 	private String city;
@@ -15,16 +15,6 @@ public class AddressTransferObject {
 	private String streetName;
 	
 	private String postalCode;
-	
-	private UserDataTransferObject userDetails;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public String getAddressId() {
 		return addressId;
@@ -72,14 +62,6 @@ public class AddressTransferObject {
 
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
-	}
-
-	public UserDataTransferObject getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(UserDataTransferObject userDetails) {
-		this.userDetails = userDetails;
 	}
 	
 	
