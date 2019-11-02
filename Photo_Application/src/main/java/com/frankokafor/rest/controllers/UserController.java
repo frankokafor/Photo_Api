@@ -137,4 +137,19 @@ public class UserController {
 		return new ResponseEntity<>(new Resource<>(returnValue), HttpStatus.FOUND);
 		//this enables us to add hal+json properties to our rest end point..
 	}
+	
+	@GetMapping(path = "/email-verification",
+			produces = { MediaType.APPLICATION_JSON_VALUE,"application/hal+json"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+			public ResponseEntity verifyEmailToken(@RequestParam(value = "token") String token) {
+				OperationStatusModel model = new OperationStatusModel();
+				model.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
+				Boolean isVerified = userService.verifiEmailToken(token);
+				if(isVerified) {
+					model.setOperationResult(RequestOperationStatus.SUCCESS.name());
+				}else {
+					model.setOperationResult(RequestOperationStatus.ERROR.name());
+				}
+				
+				return new ResponseEntity<>(model,HttpStatus.FOUND);
+			}
 }

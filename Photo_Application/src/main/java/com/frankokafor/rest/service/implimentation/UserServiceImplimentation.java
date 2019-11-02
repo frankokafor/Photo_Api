@@ -136,4 +136,10 @@ public class UserServiceImplimentation implements UserService {
 		return returnUsers;
 	}
 
+	@Override
+	public Boolean verifiEmailToken(String token) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
