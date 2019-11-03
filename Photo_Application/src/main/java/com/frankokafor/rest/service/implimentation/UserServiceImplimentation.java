@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.frankokafor.rest.exceptions.UserServiceException;
 import com.frankokafor.rest.model.response.ErrorMessages;
+import com.frankokafor.rest.model.response.UserDetailsResponseModel;
 import com.frankokafor.rest.models.UserEntity;
 import com.frankokafor.rest.repository.UserRepository;
 import com.frankokafor.rest.service.UserService;
@@ -55,7 +56,9 @@ public class UserServiceImplimentation implements UserService {
 		UserEntity entity = new ModelMapper().map(transferObject, UserEntity.class);
 		entity.setEncryptedPassword(passwordEncoder.encode(transferObject.getPassword()));
 		entity.setUserId(publicUserId);
-
+		entity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));//create a method to generate our 
+		//email verification token..
+		//entity.setEmailVerificationStatus(false);
 		UserEntity storedUser = userRepo.save(entity);
 		UserDataTransferObject returnValue = new ModelMapper().map(storedUser, UserDataTransferObject.class);
 		return returnValue;
@@ -63,11 +66,14 @@ public class UserServiceImplimentation implements UserService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) {
-		UserEntity userEntity = userRepo.findByEmail(username);
-		if (userEntity == null) {
+		UserEntity entity = userRepo.findByEmail(username);
+		if (entity == null) {
 			throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessages());
 		}
-		return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+		//return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+		return new User(entity.getEmail(), entity.getEncryptedPassword(), entity.getEmailVerificationStatus(), 
+				true, true, true, new ArrayList<>());
+		//this user constructor will help us check if the user is verified via email befor he can sign in..
 	}
 
 	@Override
@@ -116,8 +122,8 @@ public class UserServiceImplimentation implements UserService {
 	}
 
 	@Override
-	public List<UserDataTransferObject> getAllUsers(int page, int limit) {
-		List<UserDataTransferObject> returnUsers = new ArrayList<UserDataTransferObject>();
+	public List<UserDetailsResponseModel> getAllUsers(int page, int limit) {
+		List<UserDetailsResponseModel> returnUsers = new ArrayList<>();
 		if (page > 0)
 			page -= 1;// we want our page to always start from 1 not zero.....
 		Pageable request = PageRequest.of(page, limit);// this will help us add pagination to the spring jpa find all
@@ -129,8 +135,7 @@ public class UserServiceImplimentation implements UserService {
 		}
 		List<UserEntity> allUsers = usersPage.getContent();// this will convert the pages into a list.
 		allUsers.forEach(entityUsers -> {
-			UserDataTransferObject models = new UserDataTransferObject();
-			BeanUtils.copyProperties(entityUsers, models);
+			UserDetailsResponseModel models = new ModelMapper().map(entityUsers, UserDetailsResponseModel.class);
 			returnUsers.add(models);
 		});
 		return returnUsers;
@@ -138,8 +143,18 @@ public class UserServiceImplimentation implements UserService {
 
 	@Override
 	public Boolean verifiEmailToken(String token) {
-		// TODO Auto-generated method stub
-		return null;
+		boolean returnValue = false;
+		UserEntity user = userRepo.findByEmailVerificationToken(token);
+		if(user!=null) {
+			boolean isTokenExpired = utils.hasTokenExpired(token);
+			if(!isTokenExpired) {
+				user.setEmailVerificationToken(null);
+				user.setEmailVerificationStatus(Boolean.TRUE);
+				userRepo.save(user);
+				returnValue = true;
+			}
+		}
+		return returnValue;
 	}
 
 }

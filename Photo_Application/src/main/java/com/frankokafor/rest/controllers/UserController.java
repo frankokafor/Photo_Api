@@ -45,7 +45,7 @@ public class UserController {
 	private AddressService service;
 
 	@ApiOperation(value = "creates a new user...")
-	@PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	@PostMapping(path = "/create",produces = { MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity createUser(@RequestBody UserDetailsRequestModel requestModel) {
 		if (requestModel.getEmail().isEmpty() || requestModel.getFirstName().isEmpty()
 				|| requestModel.getLastName().isEmpty() || requestModel.getPassword().isEmpty()) {
@@ -94,13 +94,12 @@ public class UserController {
 		/*the request param is used for querying pagination especially when we want to get a list from our database
 		 * here we want query our ddatabase to give us a list of users from our query param
 		 * */
-		List<UserDetailsResponseModel> users = new ArrayList<>();
-		List<UserDataTransferObject> tranfer = userService.getAllUsers(page, limit);
-		tranfer.forEach(transferObjects -> {
-			UserDetailsResponseModel models = new UserDetailsResponseModel();
-			BeanUtils.copyProperties(transferObjects, models);
-			users.add(models);
-		});	
+		List<UserDetailsResponseModel> users = userService.getAllUsers(page, limit);
+//		List<UserDataTransferObject> tranfer = 
+//		tranfer.forEach(transferObjects -> {
+//			UserDetailsResponseModel models = new ModelMapper().map(transferObjects, UserDetailsResponseModel.class);
+//			users.add(models);
+//		});	
 		return new ResponseEntity<>(users,HttpStatus.FOUND);
 	}
 	
@@ -139,7 +138,7 @@ public class UserController {
 	}
 	
 	@GetMapping(path = "/email-verification",
-			produces = { MediaType.APPLICATION_JSON_VALUE,"application/hal+json"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+			produces = { MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
 			public ResponseEntity verifyEmailToken(@RequestParam(value = "token") String token) {
 				OperationStatusModel model = new OperationStatusModel();
 				model.setOperationName(RequestOperationName.VERIFY_EMAIL.name());

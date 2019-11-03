@@ -1,6 +1,4 @@
 package com.frankokafor.rest.repository;
-
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,5 +16,6 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, L
 	
 //	@Query(value = "SELECT * FROM users WHERE user_id=?",nativeQuery = true)
 	UserEntity findByUserId(String userId);
+	UserEntity findByEmailVerificationToken(String token);
 
 }
