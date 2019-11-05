@@ -1,5 +1,4 @@
 package com.frankokafor.rest.controllers;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -36,6 +35,7 @@ import io.swagger.annotations.ApiOperation;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;//this will help us not hardcode our 
 //address in the hataoeus link list.
+
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
@@ -45,7 +45,8 @@ public class UserController {
 	private AddressService service;
 
 	@ApiOperation(value = "creates a new user...")
-	@PostMapping(path = "/create",produces = { MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	@PostMapping(path = "/create", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
+			MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity createUser(@RequestBody UserDetailsRequestModel requestModel) {
 		if (requestModel.getEmail().isEmpty() || requestModel.getFirstName().isEmpty()
 				|| requestModel.getLastName().isEmpty() || requestModel.getPassword().isEmpty()) {
@@ -58,7 +59,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "get a single authenticated user...")
-	@GetMapping(path = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE})
+	@GetMapping(path = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity getUser(@PathVariable("userId") String userId) {
 		UserDetailsResponseModel responseModel = new UserDetailsResponseModel();
 		UserDataTransferObject transferObject = userService.getUserByUserId(userId);
@@ -67,7 +68,8 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "update a single authenticated user...")
-	@PutMapping(path = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@PutMapping(path = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
+			MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity updateUser(@RequestBody UserDetailsRequestModel requestModel,
 			@PathVariable("userId") String userId) {
 		UserDetailsResponseModel returnModel = new UserDetailsResponseModel();
@@ -77,45 +79,47 @@ public class UserController {
 		BeanUtils.copyProperties(updatedUser, returnModel);
 		return new ResponseEntity<>(returnModel, HttpStatus.ACCEPTED);
 	}
-	
+
 	@ApiOperation(value = "delete a single authenticated user...")
-	@DeleteMapping(path = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE})
+	@DeleteMapping(path = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity deleteUser(@PathVariable("userId") String userId) {
 		OperationStatusModel returnModel = new OperationStatusModel();
 		returnModel.setOperationName(RequestOperationName.DELETE.name());
 		userService.deleteUser(userId);
 		returnModel.setOperationResult(RequestOperationStatus.SUCCESS.name());
-		return new ResponseEntity<>(returnModel,HttpStatus.GONE);
+		return new ResponseEntity<>(returnModel, HttpStatus.GONE);
 	}
-	
-	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity getAllUsers(@RequestParam(value = "page",defaultValue = "0") int page,
-									@RequestParam(value = "limit",defaultValue = "25") int limit) {
-		/*the request param is used for querying pagination especially when we want to get a list from our database
-		 * here we want query our ddatabase to give us a list of users from our query param
-		 * */
+
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity getAllUsers(@RequestParam(value = "page", defaultValue = "0") int page,
+			@RequestParam(value = "limit", defaultValue = "25") int limit) {
+		/*
+		 * the request param is used for querying pagination especially when we want to
+		 * get a list from our database here we want query our ddatabase to give us a
+		 * list of users from our query param
+		 */
 		List<UserDetailsResponseModel> users = userService.getAllUsers(page, limit);
 //		List<UserDataTransferObject> tranfer = 
 //		tranfer.forEach(transferObjects -> {
 //			UserDetailsResponseModel models = new ModelMapper().map(transferObjects, UserDetailsResponseModel.class);
 //			users.add(models);
 //		});	
-		return new ResponseEntity<>(users,HttpStatus.FOUND);
+		return new ResponseEntity<>(users, HttpStatus.FOUND);
 	}
-	
+
 	@ApiOperation(value = "creates a new user...")
-	@GetMapping(path = "/{id}/addresses",
-	produces = { MediaType.APPLICATION_JSON_VALUE, "application/hal+json"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	@GetMapping(path = "/{id}/addresses", produces = { MediaType.APPLICATION_JSON_VALUE,
+			"application/hal+json" }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity getUserAddresses(@PathVariable("id") String userId) {
 		List<AddressResponse> returnValue = service.getUserAddresses(userId);
-		//if(address!=null&&!address.isEmpty()) {
+		// if(address!=null&&!address.isEmpty()) {
 //			Type listType = new TypeToken<List<AddressResponse>>() {}.getType();
 //			returnValue = new ModelMapper().map(address, listType);
 //			for(AddressTransferObject ato : address) {
 //				returnValue.add(new ModelMapper().map(ato, AddressResponse.class));
 //			}
-	//	}
-		for(AddressResponse me : returnValue) {
+		// }
+		for (AddressResponse me : returnValue) {
 			Link addlink = linkTo(methodOn(UserController.class).getAddress(12L)).withSelfRel();
 			Link userlink = linkTo(methodOn(UserController.class).getUserAddresses(userId)).withRel("User Addresses");
 			me.add(userlink);
@@ -123,32 +127,32 @@ public class UserController {
 		}
 		return new ResponseEntity<>(new Resources<>(returnValue), HttpStatus.FOUND);
 	}
-	
-	@GetMapping(path = "/addresses/{id}",
-	produces = { MediaType.APPLICATION_JSON_VALUE,"application/hal+json"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+
+	@GetMapping(path = "/addresses/{id}", produces = { MediaType.APPLICATION_JSON_VALUE,
+			"application/hal+json" }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity getAddress(@PathVariable("id") Long id) {
 		Link addlink = linkTo(methodOn(UserController.class).getAddress(id)).withSelfRel();
 		Link userlink = linkTo(methodOn(UserController.class).getUserAddresses("userId")).withRel("User Addresses");
-		//adding hatoaeus links
+		// adding hatoaeus links
 		AddressResponse returnValue = service.findAddress(id);
 		returnValue.add(addlink);
 		returnValue.add(userlink);
 		return new ResponseEntity<>(new Resource<>(returnValue), HttpStatus.FOUND);
-		//this enables us to add hal+json properties to our rest end point..
+		// this enables us to add hal+json properties to our rest end point..
 	}
-	
-	@GetMapping(path = "/email-verification",
-			produces = { MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-			public ResponseEntity verifyEmailToken(@RequestParam(value = "token") String token) {
-				OperationStatusModel model = new OperationStatusModel();
-				model.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
-				Boolean isVerified = userService.verifiEmailToken(token);
-				if(isVerified) {
-					model.setOperationResult(RequestOperationStatus.SUCCESS.name());
-				}else {
-					model.setOperationResult(RequestOperationStatus.ERROR.name());
-				}
-				
-				return new ResponseEntity<>(model,HttpStatus.FOUND);
-			}
+
+	@GetMapping(path = "/email-verification", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
+			MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity verifyEmailToken(@RequestParam("token") String token) {
+		OperationStatusModel model = new OperationStatusModel();
+		model.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
+		Boolean isVerified = userService.verifyEmailToken(token);
+		if (isVerified) {
+			model.setOperationResult(RequestOperationStatus.SUCCESS.name());
+		} else {
+			model.setOperationResult(RequestOperationStatus.ERROR.name());
+		}
+
+		return new ResponseEntity<>(model, HttpStatus.FOUND);
+	}
 }

@@ -20,13 +20,14 @@ import com.frankokafor.rest.model.response.ErrorMessages;
 import com.frankokafor.rest.model.response.UserDetailsResponseModel;
 import com.frankokafor.rest.models.UserEntity;
 import com.frankokafor.rest.repository.UserRepository;
+import com.frankokafor.rest.service.EmailService;
 import com.frankokafor.rest.service.UserService;
 import com.frankokafor.rest.shared.object.AddressTransferObject;
 import com.frankokafor.rest.shared.object.UserDataTransferObject;
 import com.frankokafor.rest.utils.FunctionUtils;
 
 @Service
-public class UserServiceImplimentation implements UserService {
+public class UserServiceImplimentation implements UserService{
 
 	@Autowired
 	private UserRepository userRepo;
@@ -36,6 +37,8 @@ public class UserServiceImplimentation implements UserService {
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	@Autowired
+	private EmailService service;
 
 	@Override
 	public UserDataTransferObject createUser(UserDataTransferObject transferObject) {
@@ -58,8 +61,8 @@ public class UserServiceImplimentation implements UserService {
 		entity.setUserId(publicUserId);
 		entity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));//create a method to generate our 
 		//email verification token..
-		//entity.setEmailVerificationStatus(false);
 		UserEntity storedUser = userRepo.save(entity);
+		service.sendText(transferObject);
 		UserDataTransferObject returnValue = new ModelMapper().map(storedUser, UserDataTransferObject.class);
 		return returnValue;
 	}
@@ -142,14 +145,14 @@ public class UserServiceImplimentation implements UserService {
 	}
 
 	@Override
-	public Boolean verifiEmailToken(String token) {
+	public Boolean verifyEmailToken(String token) {
 		boolean returnValue = false;
 		UserEntity user = userRepo.findByEmailVerificationToken(token);
 		if(user!=null) {
 			boolean isTokenExpired = utils.hasTokenExpired(token);
 			if(!isTokenExpired) {
 				user.setEmailVerificationToken(null);
-				user.setEmailVerificationStatus(Boolean.TRUE);
+				user.setEmailVerificationStatus(true);
 				userRepo.save(user);
 				returnValue = true;
 			}
