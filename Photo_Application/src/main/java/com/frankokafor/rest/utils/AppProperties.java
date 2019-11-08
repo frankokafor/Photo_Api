@@ -12,4 +12,21 @@ public class AppProperties {
 	public String getTokenSecret() {
 		return environment.getProperty("tokenSecret");
 	}
+	
+	public String getMailHost() {
+		return environment.getProperty("spring.mail.host");
+	}
+	
+	public String getMailUsername() {
+		return environment.getProperty("spring.mail.username");
+	}
+	
+	public String getMailPassword() {
+		return environment.getProperty("spring.mail.password");
+	}
+	
+	public String getMailPort() {
+		return environment.getProperty("spring.mail.port");
+	}
+	
 }
