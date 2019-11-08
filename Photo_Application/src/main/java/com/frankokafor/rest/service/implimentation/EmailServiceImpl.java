@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.frankokafor.rest.model.response.EmailMessages;
+import com.frankokafor.rest.models.UserEntity;
 import com.frankokafor.rest.service.EmailService;
 import com.frankokafor.rest.shared.object.UserDataTransferObject;
 
@@ -22,24 +23,16 @@ public class EmailServiceImpl implements EmailService{
 	private EmailMessages msg;
 
 	@Override
-	public void sendText(UserDataTransferObject user) {
-		try {
-		String path = msg.TEXT_BODY.replace("$tokenValue", user.getEmailVerificationToken()); 
+	public void sendText(UserEntity user) throws MessagingException {
+		String link = " http://localhost:8080/EmailVerificationService/email.html?token="+user.getEmailVerificationToken();
 		MimeMessage mime = sender.createMimeMessage();
 		MimeMessageHelper mimeHelp = new MimeMessageHelper(mime,true);
 			mimeHelp.setFrom(msg.FROM);
 			mimeHelp.setTo(user.getEmail());
 			mimeHelp.setSubject(msg.SUBJECT);
-			mimeHelp.setText(path);
+			mimeHelp.setText(msg.TEXT_BODY+link);
 			mimeHelp.setSentDate(new Date());
 			sender.send(mime);
-			System.out.println("mail sent");
-		} catch (MessagingException e) {
-			e.printStackTrace();
-			System.out.println(e.getMessage());
-		}
-		
-		
 	}
 
 }

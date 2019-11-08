@@ -28,7 +28,6 @@ import com.frankokafor.rest.utils.FunctionUtils;
 
 @Service
 public class UserServiceImplimentation implements UserService{
-
 	@Autowired
 	private UserRepository userRepo;
 
@@ -62,7 +61,12 @@ public class UserServiceImplimentation implements UserService{
 		entity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));//create a method to generate our 
 		//email verification token..
 		UserEntity storedUser = userRepo.save(entity);
-		service.sendText(transferObject);
+		try {
+			System.out.println("i got here");
+			service.sendText(storedUser);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		UserDataTransferObject returnValue = new ModelMapper().map(storedUser, UserDataTransferObject.class);
 		return returnValue;
 	}
