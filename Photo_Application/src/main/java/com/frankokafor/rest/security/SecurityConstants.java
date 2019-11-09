@@ -9,6 +9,9 @@ public class SecurityConstants {
 	public static final String HEADER_STRING = "Authorization";
 	public static final String SIGN_UP_URL = "/users";
 	public static final String EMAIL_VERIFICATION_URL = "/users/email-verification";
+	public static final String PASSWORD_RESET_TOKEN_URL ="/users/password-reset-token";
+	public static final String PASSWORD_RESET_URL ="/users/reset-password";
+	public static final long PASSWORD_TOKEN_EXPIRATION_TIME = 10800000;//3 hours
 	
 	
 	public static String getTokenSecret() {

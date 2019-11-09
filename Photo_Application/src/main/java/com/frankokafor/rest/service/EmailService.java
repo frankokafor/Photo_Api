@@ -10,5 +10,6 @@ import com.frankokafor.rest.shared.object.UserDataTransferObject;
 @Service
 public interface EmailService {
 	void sendText(UserEntity user) throws MessagingException;
+	Boolean sendPasswordEmail(String name, String email, String token) throws MessagingException;
 
 }
