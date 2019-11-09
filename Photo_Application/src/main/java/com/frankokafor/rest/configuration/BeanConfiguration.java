@@ -11,22 +11,22 @@ import com.frankokafor.rest.utils.AppProperties;
 
 @Configuration
 public class BeanConfiguration {
-	
+
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
 	public SpringApplicationContext springApplicationContext() {
 		return new SpringApplicationContext();
 	}
-	
+
 	@Bean(name = "AppProperties")
 	public AppProperties appProperties() {
 		return new AppProperties();
 	}
-	
+
 	@Bean
 	public JavaMailSenderImpl getJavaMail() {
 		JavaMailSenderImpl sender = new JavaMailSenderImpl();
@@ -40,7 +40,7 @@ public class BeanConfiguration {
 		props.put("mail.smtp.starttls.enable", true);
 		props.put("mail.smtp.starttls.required", true);
 		props.put("mail.smtp.ssl.trust", "*");
-		props.put("mail.debug", "true");
+		// props.put("mail.debug", true);
 		return sender;
 	}
 }

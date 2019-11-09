@@ -11,8 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity(name = "password_reset")
-public class PasswordReset implements Serializable{
-	
+public class PasswordReset implements Serializable {
+
 	/**
 	 * 
 	 */
@@ -21,11 +21,11 @@ public class PasswordReset implements Serializable{
 	@Id
 	@GeneratedValue
 	private long Id;
-	
-	@OneToOne(cascade = CascadeType.ALL)
+
+	@OneToOne()
 	@JoinColumn(name = "user_id")
 	private UserEntity userDetails;
-	
+
 	@Column(nullable = false)
 	private String token;
 

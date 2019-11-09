@@ -1,8 +1,8 @@
 package com.frankokafor.rest.exceptions;
 
-public class UserServiceException extends RuntimeException{
+public class UserServiceException extends RuntimeException {
 	private static final long serialVersionUID = 703824568294280463L;
-	
+
 	private String message;
 
 	public UserServiceException(String message) {
@@ -17,7 +17,5 @@ public class UserServiceException extends RuntimeException{
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-	
 
 }

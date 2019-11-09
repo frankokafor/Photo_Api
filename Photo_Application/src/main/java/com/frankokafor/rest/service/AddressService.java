@@ -11,5 +11,6 @@ import com.frankokafor.rest.shared.object.AddressTransferObject;
 public interface AddressService {
 
 	List<AddressResponse> getUserAddresses(String userId);
+
 	AddressResponse findAddress(Long id);
 }

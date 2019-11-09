@@ -6,13 +6,13 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class PhotoApplication /*extends SpringBootServletInitializer*/{
+public class PhotoApplication /* extends SpringBootServletInitializer */ {
 
 	public static void main(String[] args) {
 		SpringApplication.run(PhotoApplication.class, args);
 		System.err.println("System up");
 	}
-	
+
 //	@Override
 //	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 //		return builder.sources(PhotoApplication.class);

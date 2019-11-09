@@ -42,7 +42,7 @@ public class UserEntity implements Serializable {
 
 	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL)
 	private List<AddressEntity> addresses;
-	
+
 	@OneToOne(mappedBy = "userDetails", cascade = CascadeType.ALL)
 	private PasswordReset reset;
 
