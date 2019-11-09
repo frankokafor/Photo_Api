@@ -207,7 +207,11 @@ public class UserServiceImplimentation implements UserService{
 		if(returnUser!=null&&returnUser.getEncryptedPassword().equals(encodedPassword)) {
 			value = true;
 		}
-		passRepo.delete(newPassword);
+		try {
+			passRepo.delete(newPassword);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return value;
 	}
 }

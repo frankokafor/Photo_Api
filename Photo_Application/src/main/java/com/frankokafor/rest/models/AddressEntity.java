@@ -2,6 +2,7 @@ package com.frankokafor.rest.models;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,7 @@ public class AddressEntity implements Serializable {
 	private String streetName;
 	@Column(nullable = false, length = 50)
 	private String postalCode;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 	private UserEntity userDetails;
 

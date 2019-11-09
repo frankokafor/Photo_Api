@@ -2,6 +2,7 @@ package com.frankokafor.rest.models;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,7 +22,7 @@ public class PasswordReset implements Serializable{
 	@GeneratedValue
 	private long Id;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 	private UserEntity userDetails;
 	
