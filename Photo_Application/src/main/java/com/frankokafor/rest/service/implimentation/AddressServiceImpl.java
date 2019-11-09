@@ -16,7 +16,7 @@ import com.frankokafor.rest.service.AddressService;
 import com.frankokafor.rest.shared.object.AddressTransferObject;
 
 @Service
-public class AddressServiceImpl implements AddressService{
+public class AddressServiceImpl implements AddressService {
 	@Autowired
 	private UserRepository repo;
 	@Autowired
@@ -30,7 +30,7 @@ public class AddressServiceImpl implements AddressService{
 //		if(user==null||addresses.isEmpty()) {
 //			return null;
 //		}
-		for(AddressEntity ad : addresses) {
+		for (AddressEntity ad : addresses) {
 			AddressResponse me = new ModelMapper().map(ad, AddressResponse.class);
 			returnValue.add(me);
 		}

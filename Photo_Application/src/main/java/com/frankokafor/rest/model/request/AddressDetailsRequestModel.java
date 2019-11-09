@@ -12,7 +12,6 @@ public class AddressDetailsRequestModel {
 
 	private String postalCode;
 
-
 	public String getCity() {
 		return city;
 	}

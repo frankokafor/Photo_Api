@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.frankokafor.rest.exceptions.UserServiceException;
 import com.frankokafor.rest.model.request.PasswordResetModel;
 import com.frankokafor.rest.model.request.PasswordResetRequestModel;
@@ -31,17 +30,15 @@ import com.frankokafor.rest.shared.object.UserDataTransferObject;
 import com.frankokafor.rest.utils.FunctionUtils;
 
 @Service
-public class UserServiceImplimentation implements UserService{
+public class UserServiceImplimentation implements UserService {
 	@Autowired
 	private UserRepository userRepo;
-
 	@Autowired
 	private FunctionUtils utils;
-
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	@Autowired
-	private EmailService service;
+	private EmailServiceImpl service;
 	@Autowired
 	private PasswordResetRepository passRepo;
 
@@ -54,25 +51,23 @@ public class UserServiceImplimentation implements UserService{
 		for (int i = 0; i < transferObject.getAddresses().size(); i++) {
 			AddressTransferObject address = transferObject.getAddresses().get(i);
 			address.setUserDetails(transferObject);
-			address.setAddressId(publicUserId);
+			address.setAddressId(utils.generatedKey(5));
 			transferObject.getAddresses().set(i, address);
-			/*this will loop through the address list and generate all its public id and set its user to the registered
-			 * user and then returned back to the original transfer object.
+			/*
+			 * this will loop through the address list and generate all its public id and
+			 * set its user to the registered user and then returned back to the original
+			 * transfer object.
 			 * 
 			 */
 		}
 		UserEntity entity = new ModelMapper().map(transferObject, UserEntity.class);
 		entity.setEncryptedPassword(passwordEncoder.encode(transferObject.getPassword()));
 		entity.setUserId(publicUserId);
-		entity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));//create a method to generate our 
-		//email verification token..
+		entity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));// create a method to
+																								// generate our
+		// email verification token..
 		UserEntity storedUser = userRepo.save(entity);
-		try {
-			System.out.println("i got here");
-			service.sendText(storedUser);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		service.sendText(storedUser);
 		UserDataTransferObject returnValue = new ModelMapper().map(storedUser, UserDataTransferObject.class);
 		return returnValue;
 	}
@@ -83,10 +78,12 @@ public class UserServiceImplimentation implements UserService{
 		if (entity == null) {
 			throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessages());
 		}
-		//return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
-		return new User(entity.getEmail(), entity.getEncryptedPassword(), entity.getEmailVerificationStatus(), 
-				true, true, true, new ArrayList<>());
-		//this user constructor will help us check if the user is verified via email befor he can sign in..
+		// return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new
+		// ArrayList<>());
+		return new User(entity.getEmail(), entity.getEncryptedPassword(), entity.getEmailVerificationStatus(), true,
+				true, true, new ArrayList<>());
+		// this user constructor will help us check if the user is verified via email
+		// befor he can sign in..
 	}
 
 	@Override
@@ -95,8 +92,7 @@ public class UserServiceImplimentation implements UserService{
 		if (entity == null) {
 			throw new UsernameNotFoundException("user " + email + " does not exixts");
 		}
-		UserDataTransferObject returnValue = new UserDataTransferObject();
-		BeanUtils.copyProperties(entity, returnValue);
+		UserDataTransferObject returnValue = new ModelMapper().map(entity, UserDataTransferObject.class);
 		return returnValue;
 	}
 
@@ -158,9 +154,9 @@ public class UserServiceImplimentation implements UserService{
 	public Boolean verifyEmailToken(String token) {
 		boolean returnValue = false;
 		UserEntity user = userRepo.findByEmailVerificationToken(token);
-		if(user!=null) {
+		if (user != null) {
 			boolean isTokenExpired = utils.hasTokenExpired(token);
-			if(!isTokenExpired) {
+			if (!isTokenExpired) {
 				user.setEmailVerificationToken(null);
 				user.setEmailVerificationStatus(true);
 				userRepo.save(user);
@@ -174,37 +170,33 @@ public class UserServiceImplimentation implements UserService{
 	public Boolean requestPasswordResetToken(PasswordResetRequestModel requestModel) {
 		Boolean value = false;
 		UserEntity user = userRepo.findByEmail(requestModel.getEmail());
-		if(user==null) {
+		if (user == null) {
 			return value;
 		}
-			String token = utils.generatePasswordResetToken(user.getUserId());
-			PasswordReset password = new PasswordReset();
-			password.setToken(token);
-			password.setUserDetails(user);
-			passRepo.save(password);
-			try {
-				value = service.sendPasswordEmail(user.getFirstName(), user.getEmail(), token);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		String token = utils.generatePasswordResetToken(user.getUserId());
+		PasswordReset password = new PasswordReset();
+		password.setToken(token);
+		password.setUserDetails(user);
+		passRepo.save(password);
+		value = service.sendPasswordEmail(user.getFirstName(), user.getEmail(), token);
 		return value;
 	}
 
 	@Override
 	public Boolean passwordReset(PasswordResetModel requestModel) {
 		Boolean value = false;
-		if(utils.hasTokenExpired(requestModel.getToken())) {
+		if (utils.hasTokenExpired(requestModel.getToken())) {
 			return value;
 		}
 		PasswordReset newPassword = passRepo.findByToken(requestModel.getToken());
-		if(newPassword==null) {
+		if (newPassword == null) {
 			return value;
 		}
 		String encodedPassword = passwordEncoder.encode(requestModel.getPassword());
 		UserEntity user = newPassword.getUserDetails();
 		user.setEncryptedPassword(encodedPassword);
 		UserEntity returnUser = userRepo.save(user);
-		if(returnUser!=null&&returnUser.getEncryptedPassword().equals(encodedPassword)) {
+		if (returnUser != null && returnUser.getEncryptedPassword().equals(encodedPassword)) {
 			value = true;
 		}
 		passRepo.delete(newPassword);

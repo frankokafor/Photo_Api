@@ -1,4 +1,5 @@
 package com.frankokafor.rest.controllers;
+
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -157,8 +158,7 @@ public class UserController {
 
 		return new ResponseEntity<>(model, HttpStatus.FOUND);
 	}
-	
-	
+
 	@ApiOperation(value = "get reset password token")
 	@PostMapping(path = "/password-reset-token", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
@@ -167,12 +167,12 @@ public class UserController {
 		Boolean result = userService.requestPasswordResetToken(requestModel);
 		returnModel.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET_TOKEN.name());
 		returnModel.setOperationResult(RequestOperationStatus.ERROR.name());
-		if(result) {
+		if (result) {
 			returnModel.setOperationResult(RequestOperationStatus.SUCCESS.name());
 		}
 		return new ResponseEntity<>(returnModel, HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "reset password...")
 	@PostMapping(path = "/reset-password", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
@@ -181,7 +181,7 @@ public class UserController {
 		Boolean result = userService.passwordReset(requestModel);
 		returnModel.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
 		returnModel.setOperationResult(RequestOperationStatus.ERROR.name());
-		if(result) {
+		if (result) {
 			returnModel.setOperationResult(RequestOperationStatus.SUCCESS.name());
 		}
 		return new ResponseEntity<>(returnModel, HttpStatus.OK);

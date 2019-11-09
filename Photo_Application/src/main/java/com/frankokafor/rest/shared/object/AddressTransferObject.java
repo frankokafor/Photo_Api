@@ -1,21 +1,21 @@
 package com.frankokafor.rest.shared.object;
 
 public class AddressTransferObject {
-	
+
 	private long id;
-	
+
 	private String addressId;
-	
+
 	private String city;
-	
+
 	private String country;
-	
+
 	private String type;
-	
+
 	private String streetName;
-	
+
 	private String postalCode;
-	
+
 	private UserDataTransferObject userDetails;
 
 	public long getId() {
@@ -81,6 +81,5 @@ public class AddressTransferObject {
 	public void setUserDetails(UserDataTransferObject userDetails) {
 		this.userDetails = userDetails;
 	}
-	
-	
+
 }

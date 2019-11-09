@@ -2,18 +2,18 @@ package com.frankokafor.rest.model.response;
 
 import org.springframework.hateoas.ResourceSupport;
 
-public class AddressResponse extends ResourceSupport{
+public class AddressResponse extends ResourceSupport {
 
 	private String addressId;
-	
+
 	private String city;
-	
+
 	private String country;
-	
+
 	private String type;
-	
+
 	private String streetName;
-	
+
 	private String postalCode;
 
 	public String getAddressId() {
@@ -63,6 +63,5 @@ public class AddressResponse extends ResourceSupport{
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
 	}
-	
-	
+
 }

@@ -20,8 +20,8 @@ public class AppExceptionHandler {
 		return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 		// this class will handle a specific error called userService exception
 	}
-	
-	@ExceptionHandler(value = {Exception.class })
+
+	@ExceptionHandler(value = { Exception.class })
 	public ResponseEntity<Object> otherExceptionHandler(Exception ex, WebRequest request) {
 		CustomErrorMessage errorMessage = new CustomErrorMessage(new Date(), ex.getMessage());
 		return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.NOT_FOUND);

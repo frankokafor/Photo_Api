@@ -17,20 +17,18 @@ import io.jsonwebtoken.Jwts;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
-	
 	public AuthorizationFilter(AuthenticationManager authenticationManager) {
 		super(authenticationManager);
 		// TODO Auto-generated constructor stub
 	}
-	
-	
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		
+
 		String header = request.getHeader(SecurityConstants.HEADER_STRING);
-		
-		if(header==null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+
+		if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
 			chain.doFilter(request, response);
 			return;
 		}
@@ -38,22 +36,23 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 		SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 		chain.doFilter(request, response);
 	}
-	
-	/*this will ensure that the web token is used when a logged in user wants to access other urls within the application..
+
+	/*
+	 * this will ensure that the web token is used when a logged in user wants to
+	 * access other urls within the application..
 	 * 
 	 */
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
 		String token = request.getHeader(SecurityConstants.HEADER_STRING);
-		if(token!=null) {
+		if (token != null) {
 			token = token.replace(SecurityConstants.TOKEN_PREFIX, "");
-			
-			String user = Jwts.parser()
-								.setSigningKey(SecurityConstants.getTokenSecret())
-								.parseClaimsJws(token)
-								.getBody()
-								.getSubject();
-			
-			if(user!=null) {return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());}
+
+			String user = Jwts.parser().setSigningKey(SecurityConstants.getTokenSecret()).parseClaimsJws(token)
+					.getBody().getSubject();
+
+			if (user != null) {
+				return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+			}
 			return null;
 		}
 		return null;
