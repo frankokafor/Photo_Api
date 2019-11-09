@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.frankokafor.rest.exceptions.UserServiceException;
 import com.frankokafor.rest.model.request.PasswordResetModel;
 import com.frankokafor.rest.model.request.PasswordResetRequestModel;
@@ -100,8 +99,7 @@ public class UserServiceImplimentation implements UserService {
 		if (entity == null) {
 			throw new UsernameNotFoundException("user " + email + " does not exixts");
 		}
-		UserDataTransferObject returnValue = new UserDataTransferObject();
-		BeanUtils.copyProperties(entity, returnValue);
+		UserDataTransferObject returnValue = new ModelMapper().map(entity, UserDataTransferObject.class);
 		return returnValue;
 	}
 
