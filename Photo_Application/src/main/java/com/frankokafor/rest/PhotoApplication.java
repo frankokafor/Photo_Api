@@ -10,6 +10,7 @@ public class PhotoApplication /*extends SpringBootServletInitializer*/{
 
 	public static void main(String[] args) {
 		SpringApplication.run(PhotoApplication.class, args);
+		System.err.println("System up");
 	}
 	
 //	@Override
