@@ -16,9 +16,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.frankokafor.rest.exceptions.UserServiceException;
+import com.frankokafor.rest.model.request.PasswordResetModel;
+import com.frankokafor.rest.model.request.PasswordResetRequestModel;
 import com.frankokafor.rest.model.response.ErrorMessages;
 import com.frankokafor.rest.model.response.UserDetailsResponseModel;
+import com.frankokafor.rest.models.PasswordReset;
 import com.frankokafor.rest.models.UserEntity;
+import com.frankokafor.rest.repository.PasswordResetRepository;
 import com.frankokafor.rest.repository.UserRepository;
 import com.frankokafor.rest.service.EmailService;
 import com.frankokafor.rest.service.UserService;
@@ -38,6 +42,8 @@ public class UserServiceImplimentation implements UserService{
 	private BCryptPasswordEncoder passwordEncoder;
 	@Autowired
 	private EmailService service;
+	@Autowired
+	private PasswordResetRepository passRepo;
 
 	@Override
 	public UserDataTransferObject createUser(UserDataTransferObject transferObject) {
@@ -164,4 +170,44 @@ public class UserServiceImplimentation implements UserService{
 		return returnValue;
 	}
 
+	@Override
+	public Boolean requestPasswordResetToken(PasswordResetRequestModel requestModel) {
+		Boolean value = false;
+		UserEntity user = userRepo.findByEmail(requestModel.getEmail());
+		if(user==null) {
+			return value;
+		}
+			String token = utils.generatePasswordResetToken(user.getUserId());
+			PasswordReset password = new PasswordReset();
+			password.setToken(token);
+			password.setUserDetails(user);
+			passRepo.save(password);
+			try {
+				value = service.sendPasswordEmail(user.getFirstName(), user.getEmail(), token);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		return value;
+	}
+
+	@Override
+	public Boolean passwordReset(PasswordResetModel requestModel) {
+		Boolean value = false;
+		if(utils.hasTokenExpired(requestModel.getToken())) {
+			return value;
+		}
+		PasswordReset newPassword = passRepo.findByToken(requestModel.getToken());
+		if(newPassword==null) {
+			return value;
+		}
+		String encodedPassword = passwordEncoder.encode(requestModel.getPassword());
+		UserEntity user = newPassword.getUserDetails();
+		user.setEncryptedPassword(encodedPassword);
+		UserEntity returnUser = userRepo.save(user);
+		if(returnUser!=null&&returnUser.getEncryptedPassword().equals(encodedPassword)) {
+			value = true;
+		}
+		passRepo.delete(newPassword);
+		return value;
+	}
 }

@@ -48,4 +48,13 @@ public class FunctionUtils {
 				 	.compact();
 		 return token;
 	}
+	
+	public String generatePasswordResetToken(String userId) {
+		 String token = Jwts.builder()
+				 	.setSubject(userId)
+				 	.setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.PASSWORD_TOKEN_EXPIRATION_TIME))
+				 	.signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret())
+				 	.compact();
+		 return token;
+	}
 }

@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.frankokafor.rest.exceptions.UserServiceException;
+import com.frankokafor.rest.model.request.PasswordResetModel;
+import com.frankokafor.rest.model.request.PasswordResetRequestModel;
 import com.frankokafor.rest.model.request.UserDetailsRequestModel;
 import com.frankokafor.rest.model.response.AddressResponse;
 import com.frankokafor.rest.model.response.ErrorMessages;
@@ -154,5 +156,34 @@ public class UserController {
 		}
 
 		return new ResponseEntity<>(model, HttpStatus.FOUND);
+	}
+	
+	
+	@ApiOperation(value = "get reset password token")
+	@PostMapping(path = "/password-reset-token", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
+			MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity getPasswordResetToken(@RequestBody PasswordResetRequestModel requestModel) {
+		OperationStatusModel returnModel = new OperationStatusModel();
+		Boolean result = userService.requestPasswordResetToken(requestModel);
+		returnModel.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET_TOKEN.name());
+		returnModel.setOperationResult(RequestOperationStatus.ERROR.name());
+		if(result) {
+			returnModel.setOperationResult(RequestOperationStatus.SUCCESS.name());
+		}
+		return new ResponseEntity<>(returnModel, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "reset password...")
+	@PostMapping(path = "/reset-password", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
+			MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity requestPasswordReset(@RequestBody PasswordResetModel requestModel) {
+		OperationStatusModel returnModel = new OperationStatusModel();
+		Boolean result = userService.passwordReset(requestModel);
+		returnModel.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
+		returnModel.setOperationResult(RequestOperationStatus.ERROR.name());
+		if(result) {
+			returnModel.setOperationResult(RequestOperationStatus.SUCCESS.name());
+		}
+		return new ResponseEntity<>(returnModel, HttpStatus.OK);
 	}
 }
