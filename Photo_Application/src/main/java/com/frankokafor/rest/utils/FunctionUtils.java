@@ -32,10 +32,17 @@ public class FunctionUtils {
 	}
 
 	public boolean hasTokenExpired(String token) {
-		Claims claims = Jwts.parser().setSigningKey(SecurityConstants.getTokenSecret()).parseClaimsJws(token).getBody();
-		Date tokenExpirationDate = claims.getExpiration();
-		Date todayDate = new Date();
-		return tokenExpirationDate.before(todayDate);
+		Boolean value = false;
+		try {
+			Claims claims = Jwts.parser().setSigningKey(SecurityConstants.getTokenSecret()).parseClaimsJws(token)
+					.getBody();
+			Date tokenExpirationDate = claims.getExpiration();
+			Date todayDate = new Date();
+			value = tokenExpirationDate.before(todayDate);
+			return value;
+		} catch (Exception e) {
+			return value;
+		}
 	}
 
 	public String generateEmailVerificationToken(String userId) {

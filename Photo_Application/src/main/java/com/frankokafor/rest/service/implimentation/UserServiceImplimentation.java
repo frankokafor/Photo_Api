@@ -33,14 +33,12 @@ import com.frankokafor.rest.utils.FunctionUtils;
 public class UserServiceImplimentation implements UserService {
 	@Autowired
 	private UserRepository userRepo;
-
 	@Autowired
 	private FunctionUtils utils;
-
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	@Autowired
-	private EmailService service;
+	private EmailServiceImpl service;
 	@Autowired
 	private PasswordResetRepository passRepo;
 
@@ -53,7 +51,7 @@ public class UserServiceImplimentation implements UserService {
 		for (int i = 0; i < transferObject.getAddresses().size(); i++) {
 			AddressTransferObject address = transferObject.getAddresses().get(i);
 			address.setUserDetails(transferObject);
-			address.setAddressId(publicUserId);
+			address.setAddressId(utils.generatedKey(5));
 			transferObject.getAddresses().set(i, address);
 			/*
 			 * this will loop through the address list and generate all its public id and
@@ -69,12 +67,7 @@ public class UserServiceImplimentation implements UserService {
 																								// generate our
 		// email verification token..
 		UserEntity storedUser = userRepo.save(entity);
-		try {
-			System.out.println("i got here");
-			service.sendText(storedUser);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		service.sendText(storedUser);
 		UserDataTransferObject returnValue = new ModelMapper().map(storedUser, UserDataTransferObject.class);
 		return returnValue;
 	}
@@ -185,11 +178,7 @@ public class UserServiceImplimentation implements UserService {
 		password.setToken(token);
 		password.setUserDetails(user);
 		passRepo.save(password);
-		try {
-			value = service.sendPasswordEmail(user.getFirstName(), user.getEmail(), token);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		value = service.sendPasswordEmail(user.getFirstName(), user.getEmail(), token);
 		return value;
 	}
 

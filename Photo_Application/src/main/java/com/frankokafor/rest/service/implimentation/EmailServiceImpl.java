@@ -25,36 +25,43 @@ public class EmailServiceImpl implements EmailService {
 	private EmailMessages msg;
 
 	@Override
-	public void sendText(UserEntity user) throws MessagingException {
-		String link = " http://localhost:8080/EmailVerificationService/email.html?token="
-				+ user.getEmailVerificationToken();
-		MimeMessage mime = sender.createMimeMessage();
-		MimeMessageHelper mimeHelp = new MimeMessageHelper(mime, true);
-		mimeHelp.setFrom(msg.FROM);
-		mimeHelp.setTo(user.getEmail());
-		mimeHelp.setSubject(msg.SUBJECT_EMAIL_VERIFICATION);
-		mimeHelp.setText(msg.TEXT_BODY_EMAIL_VERIFICATION + link);
-		mimeHelp.setSentDate(new Date());
-		sender.send(mime);
-
+	public void sendText(UserEntity user) {
+		try {
+			String link = " http://localhost:8080/EmailVerificationService/email.html?token="
+					+ user.getEmailVerificationToken();
+			MimeMessage mime = sender.createMimeMessage();
+			MimeMessageHelper mimeHelp = new MimeMessageHelper(mime, true);
+			mimeHelp.setFrom(msg.FROM);
+			mimeHelp.setTo(user.getEmail());
+			mimeHelp.setSubject(msg.SUBJECT_EMAIL_VERIFICATION);
+			mimeHelp.setText(msg.TEXT_BODY_EMAIL_VERIFICATION + link);
+			mimeHelp.setSentDate(new Date());
+			sender.send(mime);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public Boolean sendPasswordEmail(String name, String email, String token) throws MessagingException {
+	public Boolean sendPasswordEmail(String name, String email, String token){
 		boolean value = false;
-		String fName = "HELLO " + name + "\n";
-		String link = " http://localhost:8080/EmailVerificationService/password-reset.html?token=" + token;
-		MimeMessage mime = sender.createMimeMessage();
-		MimeMessageHelper mimeHelp = new MimeMessageHelper(mime, true);
-		mimeHelp.setFrom(msg.FROM);
-		mimeHelp.setTo(email);
-		mimeHelp.setSubject(msg.SUBJECT_PASSWORD_RESET);
-		mimeHelp.setText(fName + msg.TEXT_BODY_PASSWORD_RESET + link);
-		mimeHelp.setSentDate(new Date());
-		sender.send(mime);
-		if (mime != null && (mime.getMessageID() != null && !mime.getMessageID().isEmpty())) {
-			value = true;
+		try {
+			String fName = "HELLO " + name + "\n";
+			String link = " http://localhost:8080/EmailVerificationService/password-reset.html?token=" + token;
+			MimeMessage mime = sender.createMimeMessage();
+			MimeMessageHelper mimeHelp = new MimeMessageHelper(mime, true);
+			mimeHelp.setFrom(msg.FROM);
+			mimeHelp.setTo(email);
+			mimeHelp.setSubject(msg.SUBJECT_PASSWORD_RESET);
+			mimeHelp.setText(fName + msg.TEXT_BODY_PASSWORD_RESET + link);
+			mimeHelp.setSentDate(new Date());
+			sender.send(mime);
+			if (mime != null && (mime.getMessageID() != null && !mime.getMessageID().isEmpty())) {
+				value = true;
+			}
+			return value;
+		} catch (Exception e) {
+			return value;
 		}
-		return value;
 	}
 }
