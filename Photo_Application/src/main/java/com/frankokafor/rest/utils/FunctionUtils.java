@@ -32,7 +32,7 @@ public class FunctionUtils {
 	}
 
 	public boolean hasTokenExpired(String token) {
-		Boolean value = false;
+		Boolean value = true;
 		try {
 			Claims claims = Jwts.parser().setSigningKey(SecurityConstants.getTokenSecret()).parseClaimsJws(token)
 					.getBody();
@@ -47,6 +47,7 @@ public class FunctionUtils {
 
 	public String generateEmailVerificationToken(String userId) {
 		String token = Jwts.builder().setSubject(userId)
+				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret()).compact();
 		return token;
@@ -54,7 +55,16 @@ public class FunctionUtils {
 
 	public String generatePasswordResetToken(String userId) {
 		String token = Jwts.builder().setSubject(userId)
+				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.PASSWORD_TOKEN_EXPIRATION_TIME))
+				.signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret()).compact();
+		return token;
+	}
+	
+	public String generateAuthenticationToken(String username) {
+		String token = Jwts.builder().setSubject(username)
+				.setIssuedAt(new Date(System.currentTimeMillis()))
+				.setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret()).compact();
 		return token;
 	}

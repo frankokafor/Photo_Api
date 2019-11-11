@@ -44,7 +44,7 @@ class FunctionUtilsTest {
 	void testHasTokenNotExpired() {
 		String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJvV2tnUDZFRHdLRVYiLCJleHAiOjE1NzMzMDI1NjF9.33CQ9Y2e2xVKfDgLjIz1QNSZesL_zRboIAnE_AshIisk8vhXR_0AkV5jkOdmuw2zkvqRR5PyThCSs8AKIz5J6A";
 		boolean me = utils.hasTokenExpired(token);
-		assertFalse(me);
+		assertTrue(me);
 	}
 
 	@Test
