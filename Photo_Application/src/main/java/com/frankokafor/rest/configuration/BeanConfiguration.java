@@ -1,11 +1,17 @@
 package com.frankokafor.rest.configuration;
 
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.frankokafor.rest.utils.AppProperties;
 
@@ -42,5 +48,30 @@ public class BeanConfiguration {
 		props.put("mail.smtp.ssl.trust", "*");
 		// props.put("mail.debug", true);
 		return sender;
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**").allowedOrigins("*");
+			}
+		};
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		final CorsConfiguration configuration = new CorsConfiguration();
+
+		configuration.setAllowedOrigins(Arrays.asList("*"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowCredentials(true);
+		configuration.setAllowedHeaders(Arrays.asList("*"));
+
+		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+
+		return source;
 	}
 }

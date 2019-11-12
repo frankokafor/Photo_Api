@@ -6,10 +6,12 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity(name = "users")
 public class UserEntity implements Serializable {
@@ -40,11 +42,14 @@ public class UserEntity implements Serializable {
 	@Column(nullable = false)
 	private Boolean emailVerificationStatus = false;
 
-	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<AddressEntity> addresses;
 
 	@OneToOne(mappedBy = "userDetails", cascade = CascadeType.ALL)
 	private PasswordReset reset;
+
+	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<Roles> roleList;
 
 	public long getId() {
 		return Id;
@@ -124,6 +129,14 @@ public class UserEntity implements Serializable {
 
 	public void setReset(PasswordReset reset) {
 		this.reset = reset;
+	}
+	@XmlTransient
+	public List<Roles> getRoleList() {
+		return roleList;
+	}
+
+	public void setRoleList(List<Roles> roleList) {
+		this.roleList = roleList;
 	}
 
 }

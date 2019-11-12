@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.frankokafor.rest.models.Roles;
+
 public class UserDataTransferObject implements Serializable {
 
 //it is adviseable to always use transfer objects  
@@ -20,6 +22,7 @@ public class UserDataTransferObject implements Serializable {
 	private String emailVerificationToken;
 	private Boolean emailVerificationStatus = false;
 	private List<AddressTransferObject> addresses;
+	private List<Roles> roleList;
 
 	@XmlTransient
 	public List<AddressTransferObject> getAddresses() {
@@ -100,6 +103,14 @@ public class UserDataTransferObject implements Serializable {
 
 	public void setEmailVerificationStatus(Boolean emailVerificationStatus) {
 		this.emailVerificationStatus = emailVerificationStatus;
+	}
+
+	public List<Roles> getRoleList() {
+		return roleList;
+	}
+
+	public void setRoleList(List<Roles> roleList) {
+		this.roleList = roleList;
 	}
 
 }
