@@ -14,20 +14,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.frankokafor.rest.exceptions.UserServiceException;
 import com.frankokafor.rest.model.request.PasswordResetModel;
 import com.frankokafor.rest.model.request.PasswordResetRequestModel;
 import com.frankokafor.rest.model.response.ErrorMessages;
 import com.frankokafor.rest.model.response.UserDetailsResponseModel;
 import com.frankokafor.rest.models.PasswordReset;
+import com.frankokafor.rest.models.Roles;
 import com.frankokafor.rest.models.UserEntity;
 import com.frankokafor.rest.repository.PasswordResetRepository;
 import com.frankokafor.rest.repository.UserRepository;
-import com.frankokafor.rest.service.EmailService;
 import com.frankokafor.rest.service.UserService;
 import com.frankokafor.rest.shared.object.AddressTransferObject;
 import com.frankokafor.rest.shared.object.UserDataTransferObject;
 import com.frankokafor.rest.utils.FunctionUtils;
+import com.frankokafor.rest.utils.RoleSets;
 
 @Service
 public class UserServiceImplimentation implements UserService {
@@ -41,6 +43,8 @@ public class UserServiceImplimentation implements UserService {
 	private EmailServiceImpl service;
 	@Autowired
 	private PasswordResetRepository passRepo;
+	@Autowired
+	private RoleSets rol;
 
 	@Override
 	public UserDataTransferObject createUser(UserDataTransferObject transferObject) {
@@ -61,8 +65,17 @@ public class UserServiceImplimentation implements UserService {
 			 */
 		}
 		UserEntity entity = new ModelMapper().map(transferObject, UserEntity.class);
+		List<Roles> roleList = new ArrayList<>();
+		Roles roles = new Roles(rol.ADMIN, rol.PR_ADMIN, entity);
+		Roles roles2 = new Roles(rol.SUPER_ADMIN, rol.PR_SUPER_ADMIN, entity);
+		Roles roles3 = new Roles(rol.DIRECTOR, rol.PR_DIRECTOR, entity);
+//		roles.setUserDetails(entity);
+		roleList.add(roles);
+		roleList.add(roles2);
+		roleList.add(roles3);
 		entity.setEncryptedPassword(passwordEncoder.encode(transferObject.getPassword()));
 		entity.setUserId(publicUserId);
+		entity.setRoleList(roleList);
 		entity.setEmailVerificationToken(utils.generateEmailVerificationToken(publicUserId));// create a method to
 																								// generate our
 		// email verification token..
@@ -80,8 +93,8 @@ public class UserServiceImplimentation implements UserService {
 		}
 		// return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new
 		// ArrayList<>());
-		return new User(entity.getEmail(), entity.getEncryptedPassword(), entity.getEmailVerificationStatus(), true,
-				true, true, new ArrayList<>());
+		return new User(entity.getEmail(), entity.getEncryptedPassword(), /* entity.getEmailVerificationStatus() */true,
+				true, true, true, new ArrayList<>());
 		// this user constructor will help us check if the user is verified via email
 		// befor he can sign in..
 	}

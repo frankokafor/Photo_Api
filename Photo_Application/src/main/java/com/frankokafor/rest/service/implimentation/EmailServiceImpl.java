@@ -7,6 +7,8 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -38,7 +40,7 @@ public class EmailServiceImpl implements EmailService {
 			mimeHelp.setSentDate(new Date());
 			sender.send(mime);
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ResponseEntity<>("wrong email address",HttpStatus.BAD_REQUEST);
 		}
 	}
 
