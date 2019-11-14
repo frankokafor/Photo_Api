@@ -1,11 +1,19 @@
 package com.frankokafor.rest.service.implimentation;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.frankokafor.rest.exceptions.UserServiceException;
 import com.frankokafor.rest.model.request.PasswordResetModel;
@@ -25,6 +34,7 @@ import com.frankokafor.rest.models.Roles;
 import com.frankokafor.rest.models.UserEntity;
 import com.frankokafor.rest.repository.PasswordResetRepository;
 import com.frankokafor.rest.repository.UserRepository;
+import com.frankokafor.rest.security.AuthenticatedUserFacade;
 import com.frankokafor.rest.service.UserService;
 import com.frankokafor.rest.shared.object.AddressTransferObject;
 import com.frankokafor.rest.shared.object.UserDataTransferObject;
@@ -45,6 +55,10 @@ public class UserServiceImplimentation implements UserService {
 	private PasswordResetRepository passRepo;
 	@Autowired
 	private RoleSets rol;
+	@Autowired
+	private AuthenticatedUserFacade userFac;
+	@Value("${file.upload-dir}")
+    String path;
 
 	@Override
 	public UserDataTransferObject createUser(UserDataTransferObject transferObject) {
@@ -187,6 +201,9 @@ public class UserServiceImplimentation implements UserService {
 			return value;
 		}
 		String token = utils.generatePasswordResetToken(user.getUserId());
+//		CompletableFuture<Boolean> mailSent = CompletableFuture.supplyAsync(() -> {
+//			return service.sendPasswordEmail(user.getFirstName(), user.getEmail(), token);
+//		});
 		PasswordReset password = new PasswordReset();
 		password.setToken(token);
 		password.setUserDetails(user);
@@ -214,5 +231,22 @@ public class UserServiceImplimentation implements UserService {
 		}
 		passRepo.delete(newPassword);
 		return value;
+	}
+
+	@Override
+	public void uploadProfilePicture(MultipartFile file) {
+		  final String fileDataName = FunctionUtils.PROFILE_IMAGE_PATH + FunctionUtils.getRandomName() + userFac.getUser().getLastName() + ".png";
+	        Path convertFile = Paths.get(path + fileDataName);
+	        System.out.println("CONVERT: " + convertFile);
+	        try {
+	            Files.copy(file.getInputStream(), convertFile, StandardCopyOption.REPLACE_EXISTING);
+	        } catch (IOException iOException) {
+	            iOException.printStackTrace();
+	        }
+
+	        UserEntity user = userRepo.findById(userFac.getUser().getId()).get();
+	        user.setPhotoUrl(fileDataName);
+	        userRepo.save(user);
+		
 	}
 }

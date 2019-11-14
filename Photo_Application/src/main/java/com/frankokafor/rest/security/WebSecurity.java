@@ -39,11 +39,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 				.permitAll().antMatchers(HttpMethod.GET, SecurityConstants.EMAIL_VERIFICATION_URL).permitAll()
 				.antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_TOKEN_URL).permitAll()
 				.antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_URL).permitAll()
+				.antMatchers(SecurityConstants.H2_CONSOLE).permitAll()
 				.antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**","/profile_image/**").permitAll()
 				.anyRequest()
 				.authenticated().and().addFilter(getAuthentication())
 				.addFilter(new AuthorizationFilter(authenticationManager())).sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
+		http.headers().frameOptions().disable();//this is to disable frame options since we are only dealing with rest apis
 		/*
 		 * because most times session can be used to cache our headers, we have to make
 		 * our session stateless so spring knows that sessions are not repeated or

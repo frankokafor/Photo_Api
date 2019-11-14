@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.frankokafor.rest.model.response.EmailMessages;
@@ -26,6 +27,7 @@ public class EmailServiceImpl implements EmailService {
 	@Autowired
 	private EmailMessages msg;
 
+	@Async
 	@Override
 	public void sendText(UserEntity user) {
 		try {
@@ -43,7 +45,7 @@ public class EmailServiceImpl implements EmailService {
 			new ResponseEntity<>("wrong email address",HttpStatus.BAD_REQUEST);
 		}
 	}
-
+	
 	@Override
 	public Boolean sendPasswordEmail(String name, String email, String token){
 		boolean value = false;

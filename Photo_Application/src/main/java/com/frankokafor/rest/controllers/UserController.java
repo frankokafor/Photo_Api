@@ -1,10 +1,11 @@
 package com.frankokafor.rest.controllers;
 
+import java.io.IOException;
 import java.util.List;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.multipart.MultipartFile;
 import com.frankokafor.rest.exceptions.UserServiceException;
 import com.frankokafor.rest.model.request.PasswordResetModel;
 import com.frankokafor.rest.model.request.PasswordResetRequestModel;
@@ -34,7 +35,10 @@ import com.frankokafor.rest.model.response.UserDetailsResponseModel;
 import com.frankokafor.rest.service.AddressService;
 import com.frankokafor.rest.service.UserService;
 import com.frankokafor.rest.shared.object.UserDataTransferObject;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;//this will help us not hardcode our 
 //address in the hataoeus link list.
@@ -110,9 +114,10 @@ public class UserController {
 		return new ResponseEntity<>(users, HttpStatus.FOUND);
 	}
 
-	@ApiOperation(value = "creates a new user...")
+	@ApiOperation(value = "get user addresses...")
 	@GetMapping(path = "/{id}/addresses", produces = { MediaType.APPLICATION_JSON_VALUE,
 			"application/hal+json" }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@Cacheable(value = "addresses", key = "#userId")
 	public ResponseEntity getUserAddresses(@PathVariable("id") String userId) {
 		List<AddressResponse> returnValue = service.getUserAddresses(userId);
 		// if(address!=null&&!address.isEmpty()) {
@@ -172,7 +177,10 @@ public class UserController {
 		}
 		return new ResponseEntity<>(returnModel, HttpStatus.OK);
 	}
-
+	
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "token", value = "Bearer", paramType = "header")
+	})
 	@ApiOperation(value = "reset password...")
 	@PostMapping(path = "/reset-password", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
@@ -186,4 +194,21 @@ public class UserController {
 		}
 		return new ResponseEntity<>(returnModel, HttpStatus.OK);
 	}
+	
+	 @ApiImplicitParams({
+	        @ApiImplicitParam(name = "authorization", value = "token", paramType = "header")
+	    })
+	    @ApiOperation(value = "upload profile picture", notes = "Upload profile picture")
+
+	    @PostMapping(path = "/uploadprofilepicture")
+
+	    public ResponseEntity uploadProfilePix(@RequestParam("file") MultipartFile file) {
+
+	        try {
+	             userService.uploadProfilePicture(file);
+	        } catch (IOException ex) {
+	            return new ResponseEntity<>(ex.getMessage(), HttpStatus.EXPECTATION_FAILED);
+	        }
+	        return new ResponseEntity<>("file uploaded successfully", HttpStatus.OK);
+	    }
 }
