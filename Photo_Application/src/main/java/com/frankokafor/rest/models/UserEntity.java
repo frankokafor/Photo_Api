@@ -30,6 +30,9 @@ public class UserEntity implements Serializable {
 
 	@Column(nullable = false, length = 120)
 	private String email;
+	
+	@Column(nullable = true, length = 300)
+	private String photoUrl;
 
 	@Column(nullable = false)
 	private String userId;
@@ -133,6 +136,14 @@ public class UserEntity implements Serializable {
 	@XmlTransient
 	public List<Roles> getRoleList() {
 		return roleList;
+	}
+
+	public String getPhotoUrl() {
+		return photoUrl;
+	}
+
+	public void setPhotoUrl(String photoUrl) {
+		this.photoUrl = photoUrl;
 	}
 
 	public void setRoleList(List<Roles> roleList) {

@@ -1,9 +1,10 @@
 package com.frankokafor.rest.service;
 
+import java.io.IOException;
 import java.util.List;
-
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.frankokafor.rest.model.request.PasswordResetModel;
 import com.frankokafor.rest.model.request.PasswordResetRequestModel;
@@ -29,4 +30,6 @@ public interface UserService extends UserDetailsService {
 	Boolean requestPasswordResetToken(PasswordResetRequestModel requestModel);
 
 	Boolean passwordReset(PasswordResetModel requestModel);
+	
+	void uploadProfilePicture(MultipartFile file) throws IOException;
 }
