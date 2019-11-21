@@ -58,7 +58,7 @@ public class UserServiceImplimentation implements UserService {
 	@Autowired
 	private AuthenticatedUserFacade userFac;
 	@Value("${file.upload-dir}")
-    String path;
+	String path;
 
 	@Override
 	public UserDataTransferObject createUser(UserDataTransferObject transferObject) {
@@ -107,8 +107,8 @@ public class UserServiceImplimentation implements UserService {
 		}
 		// return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new
 		// ArrayList<>());
-		return new User(entity.getEmail(), entity.getEncryptedPassword(), /* entity.getEmailVerificationStatus() */true,
-				true, true, true, new ArrayList<>());
+		return new User(entity.getEmail(), entity.getEncryptedPassword(), entity.getEmailVerificationStatus(), true,
+				true, true, new ArrayList<>());
 		// this user constructor will help us check if the user is verified via email
 		// befor he can sign in..
 	}
@@ -235,18 +235,19 @@ public class UserServiceImplimentation implements UserService {
 
 	@Override
 	public void uploadProfilePicture(MultipartFile file) {
-		  final String fileDataName = FunctionUtils.PROFILE_IMAGE_PATH + FunctionUtils.getRandomName() + userFac.getUser().getLastName() + ".png";
-	        Path convertFile = Paths.get(path + fileDataName);
-	        System.out.println("CONVERT: " + convertFile);
-	        try {
-	            Files.copy(file.getInputStream(), convertFile, StandardCopyOption.REPLACE_EXISTING);
-	        } catch (IOException iOException) {
-	            iOException.printStackTrace();
-	        }
+		final String fileDataName = FunctionUtils.PROFILE_IMAGE_PATH + FunctionUtils.getRandomName()
+				+ userFac.getUser().getLastName() + ".png";
+		Path convertFile = Paths.get(path + fileDataName);
+		System.out.println("CONVERT: " + convertFile);
+		try {
+			Files.copy(file.getInputStream(), convertFile, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException iOException) {
+			iOException.printStackTrace();
+		}
 
-	        UserEntity user = userRepo.findById(userFac.getUser().getId()).get();
-	        user.setPhotoUrl(fileDataName);
-	        userRepo.save(user);
-		
+		UserEntity user = userRepo.findById(userFac.getUser().getId()).get();
+		user.setPhotoUrl(fileDataName);
+		userRepo.save(user);
+
 	}
 }
